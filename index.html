@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+    --gold: #ffd700;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #020024, #090979, #00d4ff);
+    overflow: hidden;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: white;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.card {
+    position: relative;
+    z-index: 2;
+    max-width: 420px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 35px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+    text-align: center;
+}
+
+h1 {
+    font-size: 40px;
+    color: var(--gold);
+    animation: glow 2s infinite alternate;
+}
+
+#year {
+    font-size: 64px;
+    font-weight: bold;
+    color: var(--gold);
+    margin: 10px 0;
+}
+
+#countdown {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 12px 22px;
+    margin: 6px;
+    border: none;
+    border-radius: 25px;
+    background: var(--gold);
+    color: black;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px gold; }
+    to { text-shadow: 0 0 25px gold; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card">
+    <h1>🎆 Happy New Year 🎆</h1>
+    <p>May your year be full of happiness & success</p>
+
+    <div id="year"></div>
+    <div id="countdown">Loading...</div>
+
+    <p>With best wishes,<br><strong>Anurag Aanand</strong> ❤️</p>
+
+    <button onclick="startMusic()">▶ Play Music</button>
+    <button onclick="shareWhatsApp()">📲 Share on WhatsApp</button>
+</div>
+
+<audio id="music" loop>
+    <source src="Happy New Year 2026 status __ Kamriya song __ New year celebration __ happynewyear newyear2026.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* YEAR */
+const yearNow = new Date().getFullYear();
+document.getElementById("year").innerText = yearNow + 1;
+
+/* COUNTDOWN */
+const newYearTime = new Date(`Jan 1, ${yearNow + 1} 00:00:00`).getTime();
+setInterval(() => {
+    const diff = newYearTime - Date.now();
+
+    if (diff <= 0) {
+        document.getElementById("countdown").innerText =
+            "🎉 Welcome to the New Year 🎉";
+        return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").innerText =
+        `${d}d ${h}h ${m}m ${s}s left`;
+}, 1000);
+
+/* MUSIC */
+const music = document.getElementById("music");
+let musicStarted = false;
+
+function startMusic() {
+    music.play();
+    musicStarted = true;
+}
+
+/* Auto-play on first tap */
+document.body.addEventListener("click", () => {
+    if (!musicStarted) {
+        music.play();
+        musicStarted = true;
+    }
+}, { once: true });
+
+/* WHATSAPP SHARE */
+function shareWhatsApp() {
+    const text =
+        "🎉 Happy New Year! 🎉\n" +
+        "Wishing you happiness & success.\n" +
+        "From Anurag Aanand ❤️";
+
+    const url =
+        "https://wa.me/?text=" + encodeURIComponent(text);
+
+    window.open(url, "_blank");
+}
+
+/* FIREWORKS */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let particles = [];
+
+function firework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height * 0.5;
+    const color = `hsl(${Math.random() * 360},100%,60%)`;
+
+    for (let i = 0; i < 80; i++) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 7,
+            vy: (Math.random() - 0.5) * 7,
+            life: 80,
+            color
+        });
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+
+        if (p.life <= 0) particles.splice(i, 1);
+    });
+
+    requestAnimationFrame(animate);
+}
+
+setInterval(firework, 900);
+animate();
+
+window.onresize = () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+};
+</script>
+
+</body>
+</html>
